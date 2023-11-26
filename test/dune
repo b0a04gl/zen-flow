@@ -2,6 +2,6 @@
 
 (test
  (name test_lazy_stream)
- (libraries lazy_stream oUnit)
+ (libraries lazy_stream ounit2)
  (modules test_lazy_stream)
 )
