@@ -1,0 +1,7 @@
+
+
+(test
+ (name test_lazy_stream)
+ (libraries lazy_stream oUnit)
+ (modules test_lazy_stream)
+)
