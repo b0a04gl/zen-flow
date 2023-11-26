@@ -1,4 +1,4 @@
-name: CI
+name: dune_ci
 
 on:
   push:
@@ -9,24 +9,33 @@ on:
       - develop
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+        ocaml-compiler:
+          - "5.1"
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout tree
+        uses: actions/checkout@v4
 
-      - name: Setup OCaml
+      - name: Set-up OCaml ${{ matrix.ocaml-compiler }}
         uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-version: 4.12
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
-      - name: Install dependencies
-        run: opam install --deps-only --locked .
+      - run: opam install . --deps-only --with-test
 
-      - name: Build project
-        run: dune build
+      - run: opam exec -- dune build
 
-      - name: Run tests
-        run: dune runtest
+      - run: opam exec -- dune runtest
