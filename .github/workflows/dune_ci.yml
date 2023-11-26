@@ -8,34 +8,20 @@ on:
     branches:
       - develop
 
+permissions: read-all
+
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-
-    - name: Set up OCaml
-      uses: ocaml/setup-ocaml@v2
-      with:
-        ocaml-version: 4.12
-        opam-repository: default
-        allow-prelease-opam: false
-        opam-pin: true
-        opam-depext: true
-        opam-local-packages: "*.opam"
-        opam-disable-sandboxing: false
-        dune-cache: false
-        cache-prefix: v1
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Install Dependencies
-      run: opam install --deps-only .
-
-    - name: Build
-      run: dune build
-
-    - name: Test
-      run: dune runtest
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Set up OCaml
+          uses: ocaml/setup-ocaml@v2
+          with:
+            opam-repository: official
+        - name: Build and Test with Dune
+          run: |
+            opam install . --deps-only --with-test
+            opam exec -- dune build
+            opam exec -- dune runtest
