@@ -3,35 +3,31 @@ name: dune_ci
 on:
   push:
     branches:
-      - develop
+      - main
   pull_request:
     branches:
-      - develop
-  workflow_dispatch:
-
-permissions: read-all
+      - main
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        ocaml-compiler:
-          - "5.1"
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout tree
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Set-up OCaml ${{ matrix.ocaml-compiler }}
-        uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+    - name: Set up OCaml
+      uses: ocaml/setup-ocaml@v2
+      with:
+        ocaml-version: 5.1
+        opam-repository: default
 
-      - run: opam install . --deps-only --with-test
+    - name: Install Dependencies
+      run: opam install --deps-only .
 
-      - run: opam exec -- dune build
+    - name: Build
+      run: dune build
 
-      - run: opam exec -- dune runtest
+    - name: Test
+      run: dune runtest
