@@ -12,16 +12,24 @@ permissions: read-all
 
 jobs:
   build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-        - name: Set up OCaml
-          uses: ocaml/setup-ocaml@v2
-          with:
-            opam-repository: official
-        - name: Build and Test with Dune
-          run: |
-            opam install . --deps-only --with-test
-            opam exec -- dune build
-            opam exec -- dune runtest
+    strategy:
+      matrix:
+        ocaml-compiler:
+          - "4.12"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - run: opam install . --deps-only --with-test
+
+      - run: opam exec -- dune build
+
+      - run: opam exec -- dune runtest
