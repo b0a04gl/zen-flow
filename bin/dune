@@ -1,0 +1,5 @@
+(executable
+  (public_name zen_flow)
+  (name main)
+  (libraries lazy_stream)
+)
