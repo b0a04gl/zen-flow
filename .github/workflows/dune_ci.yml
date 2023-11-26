@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         ocaml-compiler:
-          - "4.12"
+          - "5.0"
 
     runs-on: ubuntu-latest
 
